@@ -1,88 +1,84 @@
-let students = JSON.parse(localStorage.getItem("students")) || [];
-let editIndex = -1;
-
-window.onload = function () {
-    displayStudents();
-    updateTotalStudents();
-};
+let students = [];
 
 function addStudent() {
-    let name = document.getElementById("name").value.trim();
-    let roll = document.getElementById("roll").value.trim();
-    let course = document.getElementById("course").value.trim();
+    const name = document.getElementById("name").value;
+    const roll = document.getElementById("roll").value;
+    const course = document.getElementById("course").value;
+    const photo = document.getElementById("photo").files[0];
 
-    let photoInput = document.getElementById("photo");
-    let photo = "";
-
-    if (photoInput.files.length > 0) {
-        photo = URL.createObjectURL(photoInput.files[0]);
-    }
-
-    if (name === "" || roll === "" || course === "") {
+    if (!name || !roll || !course) {
         alert("Please fill all fields");
         return;
     }
 
-    if (editIndex === -1) {
-        students.push({
-            name,
-            roll,
-            course,
-            photo,
+    const reader = new FileReader();
+
+    reader.onload = function (e) {
+        const student = {
+            name: name,
+            roll: roll,
+            course: course,
+            photo: e.target.result,
             date: new Date().toLocaleDateString()
-        });
+        };
 
-        alert("Student added successfully");
+        students.push(student);
+        displayStudents();
+        updateCount();
+
+        document.getElementById("name").value = "";
+        document.getElementById("roll").value = "";
+        document.getElementById("course").value = "";
+        document.getElementById("photo").value = "";
+    };
+
+    if (photo) {
+        reader.readAsDataURL(photo);
     } else {
-        students[editIndex].name = name;
-        students[editIndex].roll = roll;
-        students[editIndex].course = course;
-
-        if (photo !== "") {
-            students[editIndex].photo = photo;
-        }
-
-        editIndex = -1;
-        document.getElementById("addBtn").innerText = "Add Student";
-
-        alert("Student updated successfully");
+        reader.onload({
+            target: {
+                result: ""
+            }
+        });
     }
-
-    localStorage.setItem("students", JSON.stringify(students));
-
-    displayStudents();
-    updateTotalStudents();
-
-    document.getElementById("name").value = "";
-    document.getElementById("roll").value = "";
-    document.getElementById("course").value = "";
-    document.getElementById("photo").value = "";
 }
 
-function displayStudents(filteredStudents = students) {
-    let table = document.getElementById("studentList");
-    table.innerHTML = "";
+function displayStudents() {
+    const tbody = document.getElementById("studentTableBody");
+    tbody.innerHTML = "";
 
-    filteredStudents.forEach((student, index) => {
-        let row = table.insertRow();
-
-        row.insertCell(0).innerHTML =
-            student.photo
-                ? `<img src="${student.photo}" width="50" height="50" style="border-radius:50%;object-fit:cover;">`
-                : "No Photo";
-
-        row.insertCell(1).innerHTML = student.name;
-        row.insertCell(2).innerHTML = student.roll;
-        row.insertCell(3).innerHTML = student.course;
-        row.insertCell(4).innerHTML = student.date || "-";
-
-        row.insertCell(5).innerHTML = `
-            <button onclick="editStudent(${index})">Edit</button>
-            <button onclick="deleteStudent(${index})">Delete</button>
+    students.forEach((student, index) => {
+        tbody.innerHTML += `
+            <tr>
+                <td>
+                    <img src="${student.photo}" width="50" height="50">
+                </td>
+                <td>${student.name}</td>
+                <td>${student.roll}</td>
+                <td>${student.course}</td>
+                <td>${student.date}</td>
+                <td>
+                    <button onclick="deleteStudent(${index})">
+                        Delete
+                    </button>
+                </td>
+            </tr>
         `;
     });
 }
 
-function editStudent(index) {
-    document.getElementById("name").value = students[index].name;
-    document.getElementById("roll").value = students[index].roll
+function deleteStudent(index) {
+    students.splice(index, 1);
+    displayStudents();
+    updateCount();
+}
+
+function updateCount() {
+    document.getElementById("totalStudents").innerText = students.length;
+}
+
+function clearAll() {
+    students = [];
+    displayStudents();
+    updateCount();
+}
