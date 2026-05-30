@@ -6,9 +6,9 @@ window.onload = function () {
 };
 
 function addStudent() {
-    let name = document.getElementById("name").value;
-    let roll = document.getElementById("roll").value;
-    let course = document.getElementById("course").value;
+    let name = document.getElementById("name").value.trim();
+    let roll = document.getElementById("roll").value.trim();
+    let course = document.getElementById("course").value.trim();
 
     if (name === "" || roll === "" || course === "") {
         alert("Please fill all fields");
@@ -16,23 +16,31 @@ function addStudent() {
     }
 
     if (editIndex === -1) {
-        students.push({ name, roll, course });
+        students.push({
+            name: name,
+            roll: roll,
+            course: course
+        });
+
         alert("Student added successfully");
     } else {
-        students[editIndex] = { name, roll, course };
+        students[editIndex] = {
+            name: name,
+            roll: roll,
+            course: course
+        };
+
         editIndex = -1;
 
         document.getElementById("addBtn").innerText = "Add Student";
+
         alert("Student updated successfully");
     }
 
     localStorage.setItem("students", JSON.stringify(students));
 
+    clearInputs();
     displayStudents();
-
-    document.getElementById("name").value = "";
-    document.getElementById("roll").value = "";
-    document.getElementById("course").value = "";
 }
 
 function displayStudents(filteredStudents = students) {
@@ -89,6 +97,22 @@ function deleteStudent(index) {
     }
 }
 
+function clearAllStudents() {
+    if (confirm("Delete all students?")) {
+
+        students = [];
+
+        localStorage.setItem(
+            "students",
+            JSON.stringify(students)
+        );
+
+        displayStudents();
+
+        alert("All students deleted");
+    }
+}
+
 function searchStudent() {
     let searchValue = document
         .getElementById("search")
@@ -102,4 +126,31 @@ function searchStudent() {
     );
 
     displayStudents(filteredStudents);
+}
+
+function exportCSV() {
+    let csv = "Name,Roll Number,Course\n";
+
+    students.forEach(student => {
+        csv += `${student.name},${student.roll},${student.course}\n`;
+    });
+
+    let blob = new Blob([csv], {
+        type: "text/csv"
+    });
+
+    let link = document.createElement("a");
+
+    link.href = URL.createObjectURL(blob);
+    link.download = "students.csv";
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+function clearInputs() {
+    document.getElementById("name").value = "";
+    document.getElementById("roll").value = "";
+    document.getElementById("course").value = "";
 }
