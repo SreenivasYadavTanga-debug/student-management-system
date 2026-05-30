@@ -4,24 +4,22 @@ displayStudents();
 updateCount();
 
 function addStudent() {
-    const name = document.getElementById("name").value;
-    const roll = document.getElementById("roll").value;
-    const course = document.getElementById("course").value;
-    const photo = document.getElementById("photo").files[0];
+    const name = document.getElementById("name").value.trim();
+    const roll = document.getElementById("roll").value.trim();
+    const course = document.getElementById("course").value.trim();
+    const photoFile = document.getElementById("photo").files[0];
 
     if (!name || !roll || !course) {
-        alert("Please fill all fields");
+        alert("Please fill all fields!");
         return;
     }
 
-    const reader = new FileReader();
-
-    reader.onload = function(e) {
+    const saveStudent = (photoData) => {
         const student = {
-            name: name,
-            roll: roll,
-            course: course,
-            photo: e.target.result,
+            name,
+            roll,
+            course,
+            photo: photoData,
             date: new Date().toLocaleDateString()
         };
 
@@ -41,12 +39,16 @@ function addStudent() {
         document.getElementById("photo").value = "";
     };
 
-    if (photo) {
-        reader.readAsDataURL(photo);
+    if (photoFile) {
+        const reader = new FileReader();
+
+        reader.onload = function (e) {
+            saveStudent(e.target.result);
+        };
+
+        reader.readAsDataURL(photoFile);
     } else {
-        reader.onload({
-            target: { result: "" }
-        });
+        saveStudent("");
     }
 }
 
@@ -55,53 +57,4 @@ function displayStudents() {
 
     tbody.innerHTML = "";
 
-    students.forEach((student, index) => {
-        tbody.innerHTML += `
-        <tr>
-            <td>
-                <img src="${student.photo}"
-                     width="50"
-                     height="50"
-                     style="border-radius:50%;">
-            </td>
-            <td>${student.name}</td>
-            <td>${student.roll}</td>
-            <td>${student.course}</td>
-            <td>${student.date}</td>
-            <td>
-                <button onclick="deleteStudent(${index})">
-                    Delete
-                </button>
-            </td>
-        </tr>
-        `;
-    });
-}
-
-function deleteStudent(index) {
-    students.splice(index, 1);
-
-    localStorage.setItem(
-        "students",
-        JSON.stringify(students)
-    );
-
-    displayStudents();
-    updateCount();
-}
-
-function clearAll() {
-    if (confirm("Delete all students?")) {
-        students = [];
-
-        localStorage.removeItem("students");
-
-        displayStudents();
-        updateCount();
-    }
-}
-
-function updateCount() {
-    document.getElementById("totalStudents").innerText =
-        students.length;
-}
+    students
