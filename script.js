@@ -11,6 +11,13 @@ function addStudent() {
     let roll = document.getElementById("roll").value.trim();
     let course = document.getElementById("course").value.trim();
 
+    let photoInput = document.getElementById("photo");
+    let photo = "";
+
+    if (photoInput.files.length > 0) {
+        photo = URL.createObjectURL(photoInput.files[0]);
+    }
+
     if (name === "" || roll === "" || course === "") {
         alert("Please fill all fields");
         return;
@@ -21,13 +28,19 @@ function addStudent() {
             name,
             roll,
             course,
+            photo,
             date: new Date().toLocaleDateString()
         });
+
         alert("Student added successfully");
     } else {
         students[editIndex].name = name;
         students[editIndex].roll = roll;
         students[editIndex].course = course;
+
+        if (photo !== "") {
+            students[editIndex].photo = photo;
+        }
 
         editIndex = -1;
         document.getElementById("addBtn").innerText = "Add Student";
@@ -43,6 +56,7 @@ function addStudent() {
     document.getElementById("name").value = "";
     document.getElementById("roll").value = "";
     document.getElementById("course").value = "";
+    document.getElementById("photo").value = "";
 }
 
 function displayStudents(filteredStudents = students) {
@@ -52,12 +66,17 @@ function displayStudents(filteredStudents = students) {
     filteredStudents.forEach((student, index) => {
         let row = table.insertRow();
 
-        row.insertCell(0).innerHTML = student.name;
-        row.insertCell(1).innerHTML = student.roll;
-        row.insertCell(2).innerHTML = student.course;
-        row.insertCell(3).innerHTML = student.date || "-";
+        row.insertCell(0).innerHTML =
+            student.photo
+                ? `<img src="${student.photo}" width="50" height="50" style="border-radius:50%;object-fit:cover;">`
+                : "No Photo";
 
-        row.insertCell(4).innerHTML = `
+        row.insertCell(1).innerHTML = student.name;
+        row.insertCell(2).innerHTML = student.roll;
+        row.insertCell(3).innerHTML = student.course;
+        row.insertCell(4).innerHTML = student.date || "-";
+
+        row.insertCell(5).innerHTML = `
             <button onclick="editStudent(${index})">Edit</button>
             <button onclick="deleteStudent(${index})">Delete</button>
         `;
@@ -66,70 +85,4 @@ function displayStudents(filteredStudents = students) {
 
 function editStudent(index) {
     document.getElementById("name").value = students[index].name;
-    document.getElementById("roll").value = students[index].roll;
-    document.getElementById("course").value = students[index].course;
-
-    editIndex = index;
-
-    document.getElementById("addBtn").innerText = "Update Student";
-}
-
-function deleteStudent(index) {
-    if (confirm("Are you sure you want to delete this student?")) {
-        students.splice(index, 1);
-
-        localStorage.setItem("students", JSON.stringify(students));
-
-        displayStudents();
-        updateTotalStudents();
-
-        alert("Student deleted successfully");
-    }
-}
-
-function searchStudent() {
-    let searchValue = document
-        .getElementById("search")
-        .value
-        .toLowerCase();
-
-    let filteredStudents = students.filter(student =>
-        student.name.toLowerCase().includes(searchValue) ||
-        student.roll.toLowerCase().includes(searchValue) ||
-        student.course.toLowerCase().includes(searchValue)
-    );
-
-    displayStudents(filteredStudents);
-}
-
-function updateTotalStudents() {
-    document.getElementById("totalStudents").innerText = students.length;
-}
-
-function clearAllStudents() {
-    if (confirm("Delete all student records?")) {
-        students = [];
-        localStorage.removeItem("students");
-
-        displayStudents();
-        updateTotalStudents();
-    }
-}
-
-function exportCSV() {
-    let csv = "Name,Roll No,Course,Date Added\n";
-
-    students.forEach(student => {
-        csv += `${student.name},${student.roll},${student.course},${student.date || ""}\n`;
-    });
-
-    let blob = new Blob([csv], { type: "text/csv" });
-    let url = window.URL.createObjectURL(blob);
-
-    let a = document.createElement("a");
-    a.href = url;
-    a.download = "students.csv";
-    a.click();
-
-    window.URL.revokeObjectURL(url);
-}
+    document.getElementById("roll").value = students[index].roll
