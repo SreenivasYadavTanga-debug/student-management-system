@@ -1,52 +1,84 @@
 body {
     font-family: Arial, sans-serif;
-    background: #f4f4f4;
+    background: #f4f7fc;
     margin: 0;
     padding: 20px;
 }
 
 .container {
-    max-width: 800px;
+    max-width: 1100px;
     margin: auto;
     background: white;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px gray;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
 }
 
-h1, h2 {
+h1 {
     text-align: center;
+    color: #1e3a8a;
+}
+
+h2 {
+    text-align: center;
+    color: #333;
+}
+
+h3 {
+    color: #2563eb;
 }
 
 input {
-    width: 30%;
-    padding: 10px;
-    margin: 5px;
+    width: 320px;
+    padding: 12px;
+    margin: 8px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
 }
 
 button {
-    padding: 10px 15px;
-    background: blue;
-    color: white;
+    padding: 12px 18px;
+    margin: 5px;
     border: none;
+    border-radius: 8px;
+    background: #2563eb;
+    color: white;
     cursor: pointer;
+    font-size: 15px;
 }
 
 button:hover {
-    background: darkblue;
+    background: #1e40af;
 }
 
 table {
     width: 100%;
-    margin-top: 20px;
     border-collapse: collapse;
+    margin-top: 20px;
 }
 
-table, th, td {
-    border: 1px solid black;
+table th {
+    background: #2563eb;
+    color: white;
+    padding: 12px;
 }
 
-th, td {
-    padding: 10px;
+table td {
+    padding: 12px;
     text-align: center;
+}
+
+table tr:nth-child(even) {
+    background: #f8fafc;
+}
+
+table tr:hover {
+    background: #e0e7ff;
+}
+
+#studentCount {
+    font-size: 24px;
+    color: #dc2626;
+    font-weight: bold;
 }
