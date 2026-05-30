@@ -21,15 +21,11 @@ h1 {
 
 h2 {
     text-align: center;
-    color: #333;
-}
-
-h3 {
     color: #2563eb;
 }
 
 input {
-    width: 320px;
+    width: 300px;
     padding: 12px;
     margin: 8px;
     border: 1px solid #ccc;
@@ -56,6 +52,7 @@ table {
     width: 100%;
     border-collapse: collapse;
     margin-top: 20px;
+    background: white;
 }
 
 table th {
@@ -67,6 +64,7 @@ table th {
 table td {
     padding: 12px;
     text-align: center;
+    border-bottom: 1px solid #ddd;
 }
 
 table tr:nth-child(even) {
@@ -77,8 +75,49 @@ table tr:hover {
     background: #e0e7ff;
 }
 
-#studentCount {
-    font-size: 24px;
+#totalStudents {
     color: #dc2626;
     font-weight: bold;
+}
+
+.dashboard {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    margin: 20px 0;
+}
+
+.card {
+    flex: 1;
+    background: #2563eb;
+    color: white;
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+.card h3 {
+    margin: 0;
+    color: white;
+}
+
+.card p {
+    font-size: 28px;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+@media (max-width: 768px) {
+    .dashboard {
+        flex-direction: column;
+    }
+
+    input {
+        width: 90%;
+    }
+
+    table {
+        font-size: 14px;
+    }
 }
