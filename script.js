@@ -5,6 +5,7 @@ displayStudents();
 updateCount();
 
 function addStudent() {
+
     const name = document.getElementById("name").value.trim();
     const roll = document.getElementById("roll").value.trim();
     const course = document.getElementById("course").value.trim();
@@ -16,22 +17,24 @@ function addStudent() {
     }
 
     const saveStudent = (photoData) => {
+
         const student = {
-            name: name,
-            roll: roll,
-            course: course,
+            name,
+            roll,
+            course,
             photo: photoData,
+            attendance: "Not Marked",
             date: new Date().toLocaleDateString()
         };
 
         if (editIndex === -1) {
             students.push(student);
         } else {
-            if (!photoData) {
-                student.photo = students[editIndex].photo;
-            }
+            student.attendance =
+                students[editIndex].attendance;
 
             students[editIndex] = student;
+
             editIndex = -1;
 
             document.getElementById("addBtn").innerText =
@@ -53,14 +56,17 @@ function addStudent() {
     };
 
     if (photoFile) {
+
         const reader = new FileReader();
 
-        reader.onload = function (e) {
+        reader.onload = function(e) {
             saveStudent(e.target.result);
         };
 
         reader.readAsDataURL(photoFile);
+
     } else {
+
         let oldPhoto = "";
 
         if (editIndex !== -1) {
@@ -72,39 +78,89 @@ function addStudent() {
 }
 
 function displayStudents() {
-    const tbody = document.getElementById("studentTableBody");
+
+    const tbody =
+        document.getElementById("studentTableBody");
 
     tbody.innerHTML = "";
 
     students.forEach((student, index) => {
+
         tbody.innerHTML += `
         <tr>
-            <td>
-                ${
-                    student.photo
-                        ? `<img src="${student.photo}" width="60" height="60" style="border-radius:50%;">`
-                        : "No Photo"
-                }
-            </td>
-            <td>${student.name}</td>
-            <td>${student.roll}</td>
-            <td>${student.course}</td>
-            <td>${student.date}</td>
-            <td>
-                <button onclick="editStudent(${index})">
-                    Edit
-                </button>
 
-                <button onclick="deleteStudent(${index})">
-                    Delete
-                </button>
-            </td>
+        <td>
+        ${
+            student.photo
+            ? `<img src="${student.photo}"
+            width="60"
+            height="60"
+            style="border-radius:50%;">`
+            : "No Photo"
+        }
+        </td>
+
+        <td>${student.name}</td>
+
+        <td>${student.roll}</td>
+
+        <td>${student.course}</td>
+
+        <td>${student.attendance}</td>
+
+        <td>${student.date}</td>
+
+        <td>
+
+        <button onclick="markPresent(${index})">
+        Present
+        </button>
+
+        <button onclick="markAbsent(${index})">
+        Absent
+        </button>
+
+        <button onclick="editStudent(${index})">
+        Edit
+        </button>
+
+        <button onclick="deleteStudent(${index})">
+        Delete
+        </button>
+
+        </td>
+
         </tr>
         `;
     });
 }
 
+function markPresent(index) {
+
+    students[index].attendance = "Present";
+
+    localStorage.setItem(
+        "students",
+        JSON.stringify(students)
+    );
+
+    displayStudents();
+}
+
+function markAbsent(index) {
+
+    students[index].attendance = "Absent";
+
+    localStorage.setItem(
+        "students",
+        JSON.stringify(students)
+    );
+
+    displayStudents();
+}
+
 function editStudent(index) {
+
     document.getElementById("name").value =
         students[index].name;
 
@@ -121,7 +177,9 @@ function editStudent(index) {
 }
 
 function deleteStudent(index) {
+
     if (confirm("Delete this student?")) {
+
         students.splice(index, 1);
 
         localStorage.setItem(
@@ -135,7 +193,9 @@ function deleteStudent(index) {
 }
 
 function clearAll() {
+
     if (confirm("Delete all students?")) {
+
         students = [];
 
         localStorage.removeItem("students");
@@ -146,43 +206,50 @@ function clearAll() {
 }
 
 function updateCount() {
+
     document.getElementById("totalStudents").innerText =
         students.length;
 }
 
 function searchStudent() {
-    const filter = document
-        .getElementById("searchInput")
+
+    const filter =
+        document.getElementById("searchInput")
         .value
         .toLowerCase();
 
-    const rows = document.querySelectorAll(
-        "#studentTableBody tr"
-    );
+    const rows =
+        document.querySelectorAll(
+            "#studentTableBody tr"
+        );
 
     rows.forEach(row => {
-        const text = row.innerText.toLowerCase();
+
+        const text =
+            row.innerText.toLowerCase();
 
         row.style.display =
             text.includes(filter)
-                ? ""
-                : "none";
+            ? ""
+            : "none";
     });
 }
 
 function exportCSV() {
+
     let csv =
-        "Name,Roll No,Course,Date Added\n";
+    "Name,Roll No,Course,Attendance,Date Added\n";
 
     students.forEach(student => {
+
         csv +=
-            `${student.name},${student.roll},${student.course},${student.date}\n`;
+        `${student.name},${student.roll},${student.course},${student.attendance},${student.date}\n`;
     });
 
-    const blob = new Blob(
-        [csv],
-        { type: "text/csv" }
-    );
+    const blob =
+        new Blob([csv], {
+            type: "text/csv"
+        });
 
     const link =
         document.createElement("a");
@@ -191,7 +258,7 @@ function exportCSV() {
         URL.createObjectURL(blob);
 
     link.download =
-        "students.csv";
+        "attendance_report.csv";
 
     link.click();
 }
