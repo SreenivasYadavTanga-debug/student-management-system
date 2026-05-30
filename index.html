@@ -14,6 +14,23 @@
 
     <h3>Total Students: <span id="studentCount">0</span></h3>
 
+    <div class="dashboard">
+        <div class="card">
+            <h3>Total</h3>
+            <p id="totalCard">0</p>
+        </div>
+
+        <div class="card">
+            <h3>ECE</h3>
+            <p id="eceCount">0</p>
+        </div>
+
+        <div class="card">
+            <h3>CSE</h3>
+            <p id="cseCount">0</p>
+        </div>
+    </div>
+
     <input type="text" id="name" placeholder="Student Name">
     <input type="text" id="roll" placeholder="Roll Number">
 
@@ -21,17 +38,11 @@
 
     <input type="text" id="course" placeholder="Course">
 
-    <button id="addBtn" onclick="addStudent()">
-        Add Student
-    </button>
+    <button id="addBtn" onclick="addStudent()">Add Student</button>
 
-    <button onclick="clearAllStudents()">
-        Clear All
-    </button>
+    <button onclick="clearAllStudents()">Clear All</button>
 
-    <button onclick="exportCSV()">
-        Export CSV
-    </button>
+    <button onclick="exportCSV()">Export CSV</button>
 
     <br><br>
 
