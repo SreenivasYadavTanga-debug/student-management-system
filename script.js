@@ -4,22 +4,26 @@ displayStudents();
 updateCount();
 
 function addStudent() {
-    const name = document.getElementById("name").value.trim();
-    const roll = document.getElementById("roll").value.trim();
-    const course = document.getElementById("course").value.trim();
-    const photoFile = document.getElementById("photo").files[0];
 
-    if (!name || !roll || !course) {
-        alert("Please fill all fields!");
+    let name = document.getElementById("name").value;
+    let roll = document.getElementById("roll").value;
+    let course = document.getElementById("course").value;
+    let photo = document.getElementById("photo").files[0];
+
+    if (name === "" || roll === "" || course === "") {
+        alert("Please fill all fields");
         return;
     }
 
-    const saveStudent = (photoData) => {
-        const student = {
-            name,
-            roll,
-            course,
-            photo: photoData,
+    let reader = new FileReader();
+
+    reader.onload = function(e) {
+
+        let student = {
+            name: name,
+            roll: roll,
+            course: course,
+            photo: e.target.result,
             date: new Date().toLocaleDateString()
         };
 
@@ -39,22 +43,102 @@ function addStudent() {
         document.getElementById("photo").value = "";
     };
 
-    if (photoFile) {
-        const reader = new FileReader();
-
-        reader.onload = function (e) {
-            saveStudent(e.target.result);
-        };
-
-        reader.readAsDataURL(photoFile);
+    if (photo) {
+        reader.readAsDataURL(photo);
     } else {
-        saveStudent("");
+        reader.onload({
+            target: {
+                result: ""
+            }
+        });
     }
 }
 
 function displayStudents() {
-    const tbody = document.getElementById("studentTableBody");
+
+    let tbody =
+        document.getElementById("studentTableBody");
 
     tbody.innerHTML = "";
 
-    students
+    students.forEach(function(student, index) {
+
+        tbody.innerHTML += `
+        <tr>
+            <td>
+                <img src="${student.photo}"
+                     width="60"
+                     height="60"
+                     style="border-radius:50%;">
+            </td>
+
+            <td>${student.name}</td>
+
+            <td>${student.roll}</td>
+
+            <td>${student.course}</td>
+
+            <td>${student.date}</td>
+
+            <td>
+                <button onclick="deleteStudent(${index})">
+                    Delete
+                </button>
+            </td>
+        </tr>
+        `;
+    });
+}
+
+function deleteStudent(index) {
+
+    students.splice(index, 1);
+
+    localStorage.setItem(
+        "students",
+        JSON.stringify(students)
+    );
+
+    displayStudents();
+    updateCount();
+}
+
+function clearAll() {
+
+    students = [];
+
+    localStorage.removeItem("students");
+
+    displayStudents();
+    updateCount();
+}
+
+function updateCount() {
+
+    document.getElementById("totalStudents")
+        .innerText = students.length;
+}
+
+function searchStudent() {
+
+    let filter =
+        document.getElementById("searchInput")
+        .value.toLowerCase();
+
+    let rows =
+        document.querySelectorAll(
+            "#studentTableBody tr"
+        );
+
+    rows.forEach(function(row) {
+
+        let text =
+            row.innerText.toLowerCase();
+
+        if (text.includes(filter)) {
+            row.style.display = "";
+        } else {
+            row.style.display = "none";
+        }
+    });
+}
