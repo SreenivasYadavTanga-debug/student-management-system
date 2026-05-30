@@ -21,6 +21,7 @@ function addStudent() {
     } else {
         students[editIndex] = { name, roll, course };
         editIndex = -1;
+
         document.getElementById("addBtn").innerText = "Add Student";
         alert("Student updated successfully");
     }
@@ -36,7 +37,11 @@ function addStudent() {
 
 function displayStudents(filteredStudents = students) {
     let table = document.getElementById("studentList");
+
     table.innerHTML = "";
+
+    document.getElementById("studentCount").innerText =
+        students.length;
 
     filteredStudents.forEach((student, index) => {
         let row = table.insertRow();
@@ -53,19 +58,30 @@ function displayStudents(filteredStudents = students) {
 }
 
 function editStudent(index) {
-    document.getElementById("name").value = students[index].name;
-    document.getElementById("roll").value = students[index].roll;
-    document.getElementById("course").value = students[index].course;
+    document.getElementById("name").value =
+        students[index].name;
+
+    document.getElementById("roll").value =
+        students[index].roll;
+
+    document.getElementById("course").value =
+        students[index].course;
 
     editIndex = index;
-    document.getElementById("addBtn").innerText = "Update Student";
+
+    document.getElementById("addBtn").innerText =
+        "Update Student";
 }
 
 function deleteStudent(index) {
     if (confirm("Are you sure you want to delete this student?")) {
+
         students.splice(index, 1);
 
-        localStorage.setItem("students", JSON.stringify(students));
+        localStorage.setItem(
+            "students",
+            JSON.stringify(students)
+        );
 
         displayStudents();
 
@@ -74,7 +90,10 @@ function deleteStudent(index) {
 }
 
 function searchStudent() {
-    let searchValue = document.getElementById("search").value.toLowerCase();
+    let searchValue = document
+        .getElementById("search")
+        .value
+        .toLowerCase();
 
     let filteredStudents = students.filter(student =>
         student.name.toLowerCase().includes(searchValue) ||
