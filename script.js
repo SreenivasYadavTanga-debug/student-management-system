@@ -1,4 +1,5 @@
 let students = JSON.parse(localStorage.getItem("students")) || [];
+let editIndex = -1;
 
 displayStudents();
 updateCount();
@@ -25,7 +26,20 @@ function addStudent() {
             date: new Date().toLocaleDateString()
         };
 
-        students.push(student);
+        if (editIndex === -1) {
+            students.push(student);
+        } else {
+
+            if (!photoData) {
+                student.photo = students[editIndex].photo;
+            }
+
+            students[editIndex] = student;
+            editIndex = -1;
+
+            document.getElementById("addBtn").innerText =
+                "Add Student";
+        }
 
         localStorage.setItem(
             "students",
@@ -45,7 +59,7 @@ function addStudent() {
 
         let reader = new FileReader();
 
-        reader.onload = function(e) {
+        reader.onload = function (e) {
             saveStudent(e.target.result);
         };
 
@@ -53,13 +67,20 @@ function addStudent() {
 
     } else {
 
-        saveStudent("");
+        let oldPhoto = "";
+
+        if (editIndex !== -1) {
+            oldPhoto = students[editIndex].photo;
+        }
+
+        saveStudent(oldPhoto);
     }
 }
 
 function displayStudents() {
 
-    let tbody = document.getElementById("studentTableBody");
+    let tbody =
+        document.getElementById("studentTableBody");
 
     tbody.innerHTML = "";
 
@@ -70,20 +91,21 @@ function displayStudents() {
             <td>
                 ${
                     student.photo
-                    ? `<img src="${student.photo}" width="60" height="60" style="border-radius:50%;">`
-                    : "No Photo"
+                        ? `<img src="${student.photo}" width="60" height="60" style="border-radius:50%;">`
+                        : "No Photo"
                 }
             </td>
 
             <td>${student.name}</td>
-
             <td>${student.roll}</td>
-
             <td>${student.course}</td>
-
             <td>${student.date}</td>
 
             <td>
+                <button onclick="editStudent(${index})">
+                    Edit
+                </button>
+
                 <button onclick="deleteStudent(${index})">
                     Delete
                 </button>
@@ -91,6 +113,23 @@ function displayStudents() {
         </tr>
         `;
     });
+}
+
+function editStudent(index) {
+
+    document.getElementById("name").value =
+        students[index].name;
+
+    document.getElementById("roll").value =
+        students[index].roll;
+
+    document.getElementById("course").value =
+        students[index].course;
+
+    editIndex = index;
+
+    document.getElementById("addBtn").innerText =
+        "Update Student";
 }
 
 function deleteStudent(index) {
@@ -130,21 +169,25 @@ function updateCount() {
 
 function searchStudent() {
 
-    let filter = document
-        .getElementById("searchInput")
-        .value
-        .toLowerCase();
+    let filter =
+        document.getElementById("searchInput")
+            .value
+            .toLowerCase();
 
-    let rows = document.querySelectorAll(
-        "#studentTableBody tr"
-    );
+    let rows =
+        document.querySelectorAll(
+            "#studentTableBody tr"
+        );
 
     rows.forEach(row => {
 
-        let text = row.innerText.toLowerCase();
+        let text =
+            row.innerText.toLowerCase();
 
         row.style.display =
-            text.includes(filter) ? "" : "none";
+            text.includes(filter)
+                ? ""
+                : "none";
     });
 }
 
@@ -154,23 +197,3 @@ function exportCSV() {
         "Name,Roll No,Course,Date Added\n";
 
     students.forEach(student => {
-
-        csv +=
-            `${student.name},${student.roll},${student.course},${student.date}\n`;
-    });
-
-    const blob = new Blob(
-        [csv],
-        { type: "text/csv" }
-    );
-
-    const link =
-        document.createElement("a");
-
-    link.href =
-        URL.createObjectURL(blob);
-
-    link.download = "students.csv";
-
-    link.click();
-}
