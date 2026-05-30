@@ -5,11 +5,10 @@ displayStudents();
 updateCount();
 
 function addStudent() {
-
-    let name = document.getElementById("name").value.trim();
-    let roll = document.getElementById("roll").value.trim();
-    let course = document.getElementById("course").value.trim();
-    let photoFile = document.getElementById("photo").files[0];
+    const name = document.getElementById("name").value.trim();
+    const roll = document.getElementById("roll").value.trim();
+    const course = document.getElementById("course").value.trim();
+    const photoFile = document.getElementById("photo").files[0];
 
     if (!name || !roll || !course) {
         alert("Please fill all fields");
@@ -17,8 +16,7 @@ function addStudent() {
     }
 
     const saveStudent = (photoData) => {
-
-        let student = {
+        const student = {
             name: name,
             roll: roll,
             course: course,
@@ -29,7 +27,6 @@ function addStudent() {
         if (editIndex === -1) {
             students.push(student);
         } else {
-
             if (!photoData) {
                 student.photo = students[editIndex].photo;
             }
@@ -56,17 +53,14 @@ function addStudent() {
     };
 
     if (photoFile) {
-
-        let reader = new FileReader();
+        const reader = new FileReader();
 
         reader.onload = function (e) {
             saveStudent(e.target.result);
         };
 
         reader.readAsDataURL(photoFile);
-
     } else {
-
         let oldPhoto = "";
 
         if (editIndex !== -1) {
@@ -78,14 +72,11 @@ function addStudent() {
 }
 
 function displayStudents() {
-
-    let tbody =
-        document.getElementById("studentTableBody");
+    const tbody = document.getElementById("studentTableBody");
 
     tbody.innerHTML = "";
 
     students.forEach((student, index) => {
-
         tbody.innerHTML += `
         <tr>
             <td>
@@ -95,12 +86,10 @@ function displayStudents() {
                         : "No Photo"
                 }
             </td>
-
             <td>${student.name}</td>
             <td>${student.roll}</td>
             <td>${student.course}</td>
             <td>${student.date}</td>
-
             <td>
                 <button onclick="editStudent(${index})">
                     Edit
@@ -116,7 +105,6 @@ function displayStudents() {
 }
 
 function editStudent(index) {
-
     document.getElementById("name").value =
         students[index].name;
 
@@ -133,9 +121,7 @@ function editStudent(index) {
 }
 
 function deleteStudent(index) {
-
     if (confirm("Delete this student?")) {
-
         students.splice(index, 1);
 
         localStorage.setItem(
@@ -149,9 +135,7 @@ function deleteStudent(index) {
 }
 
 function clearAll() {
-
     if (confirm("Delete all students?")) {
-
         students = [];
 
         localStorage.removeItem("students");
@@ -162,27 +146,22 @@ function clearAll() {
 }
 
 function updateCount() {
-
     document.getElementById("totalStudents").innerText =
         students.length;
 }
 
 function searchStudent() {
+    const filter = document
+        .getElementById("searchInput")
+        .value
+        .toLowerCase();
 
-    let filter =
-        document.getElementById("searchInput")
-            .value
-            .toLowerCase();
-
-    let rows =
-        document.querySelectorAll(
-            "#studentTableBody tr"
-        );
+    const rows = document.querySelectorAll(
+        "#studentTableBody tr"
+    );
 
     rows.forEach(row => {
-
-        let text =
-            row.innerText.toLowerCase();
+        const text = row.innerText.toLowerCase();
 
         row.style.display =
             text.includes(filter)
@@ -192,8 +171,27 @@ function searchStudent() {
 }
 
 function exportCSV() {
-
     let csv =
         "Name,Roll No,Course,Date Added\n";
 
     students.forEach(student => {
+        csv +=
+            `${student.name},${student.roll},${student.course},${student.date}\n`;
+    });
+
+    const blob = new Blob(
+        [csv],
+        { type: "text/csv" }
+    );
+
+    const link =
+        document.createElement("a");
+
+    link.href =
+        URL.createObjectURL(blob);
+
+    link.download =
+        "students.csv";
+
+    link.click();
+}
