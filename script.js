@@ -5,25 +5,23 @@ updateCount();
 
 function addStudent() {
 
-    let name = document.getElementById("name").value;
-    let roll = document.getElementById("roll").value;
-    let course = document.getElementById("course").value;
-    let photo = document.getElementById("photo").files[0];
+    let name = document.getElementById("name").value.trim();
+    let roll = document.getElementById("roll").value.trim();
+    let course = document.getElementById("course").value.trim();
+    let photoFile = document.getElementById("photo").files[0];
 
-    if (name === "" || roll === "" || course === "") {
+    if (!name || !roll || !course) {
         alert("Please fill all fields");
         return;
     }
 
-    let reader = new FileReader();
-
-    reader.onload = function(e) {
+    const saveStudent = (photoData) => {
 
         let student = {
             name: name,
             roll: roll,
             course: course,
-            photo: e.target.result,
+            photo: photoData,
             date: new Date().toLocaleDateString()
         };
 
@@ -43,33 +41,38 @@ function addStudent() {
         document.getElementById("photo").value = "";
     };
 
-    if (photo) {
-        reader.readAsDataURL(photo);
+    if (photoFile) {
+
+        let reader = new FileReader();
+
+        reader.onload = function(e) {
+            saveStudent(e.target.result);
+        };
+
+        reader.readAsDataURL(photoFile);
+
     } else {
-        reader.onload({
-            target: {
-                result: ""
-            }
-        });
+
+        saveStudent("");
     }
 }
 
 function displayStudents() {
 
-    let tbody =
-        document.getElementById("studentTableBody");
+    let tbody = document.getElementById("studentTableBody");
 
     tbody.innerHTML = "";
 
-    students.forEach(function(student, index) {
+    students.forEach((student, index) => {
 
         tbody.innerHTML += `
         <tr>
             <td>
-                <img src="${student.photo}"
-                     width="60"
-                     height="60"
-                     style="border-radius:50%;">
+                ${
+                    student.photo
+                    ? `<img src="${student.photo}" width="60" height="60" style="border-radius:50%;">`
+                    : "No Photo"
+                }
             </td>
 
             <td>${student.name}</td>
@@ -92,53 +95,82 @@ function displayStudents() {
 
 function deleteStudent(index) {
 
-    students.splice(index, 1);
+    if (confirm("Delete this student?")) {
 
-    localStorage.setItem(
-        "students",
-        JSON.stringify(students)
-    );
+        students.splice(index, 1);
 
-    displayStudents();
-    updateCount();
+        localStorage.setItem(
+            "students",
+            JSON.stringify(students)
+        );
+
+        displayStudents();
+        updateCount();
+    }
 }
 
 function clearAll() {
 
-    students = [];
+    if (confirm("Delete all students?")) {
 
-    localStorage.removeItem("students");
+        students = [];
 
-    displayStudents();
-    updateCount();
+        localStorage.removeItem("students");
+
+        displayStudents();
+        updateCount();
+    }
 }
 
 function updateCount() {
 
-    document.getElementById("totalStudents")
-        .innerText = students.length;
+    document.getElementById("totalStudents").innerText =
+        students.length;
 }
 
 function searchStudent() {
 
-    let filter =
-        document.getElementById("searchInput")
-        .value.toLowerCase();
+    let filter = document
+        .getElementById("searchInput")
+        .value
+        .toLowerCase();
 
-    let rows =
-        document.querySelectorAll(
-            "#studentTableBody tr"
-        );
+    let rows = document.querySelectorAll(
+        "#studentTableBody tr"
+    );
 
-    rows.forEach(function(row) {
+    rows.forEach(row => {
 
-        let text =
-            row.innerText.toLowerCase();
+        let text = row.innerText.toLowerCase();
 
-        if (text.includes(filter)) {
-            row.style.display = "";
-        } else {
-            row.style.display = "none";
-        }
+        row.style.display =
+            text.includes(filter) ? "" : "none";
     });
+}
+
+function exportCSV() {
+
+    let csv =
+        "Name,Roll No,Course,Date Added\n";
+
+    students.forEach(student => {
+
+        csv +=
+            `${student.name},${student.roll},${student.course},${student.date}\n`;
+    });
+
+    const blob = new Blob(
+        [csv],
+        { type: "text/csv" }
+    );
+
+    const link =
+        document.createElement("a");
+
+    link.href =
+        URL.createObjectURL(blob);
+
+    link.download = "students.csv";
+
+    link.click();
 }
