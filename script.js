@@ -1,4 +1,7 @@
-let students = [];
+let students = JSON.parse(localStorage.getItem("students")) || [];
+
+displayStudents();
+updateCount();
 
 function addStudent() {
     const name = document.getElementById("name").value;
@@ -13,7 +16,7 @@ function addStudent() {
 
     const reader = new FileReader();
 
-    reader.onload = function (e) {
+    reader.onload = function(e) {
         const student = {
             name: name,
             roll: roll,
@@ -23,6 +26,12 @@ function addStudent() {
         };
 
         students.push(student);
+
+        localStorage.setItem(
+            "students",
+            JSON.stringify(students)
+        );
+
         displayStudents();
         updateCount();
 
@@ -36,49 +45,63 @@ function addStudent() {
         reader.readAsDataURL(photo);
     } else {
         reader.onload({
-            target: {
-                result: ""
-            }
+            target: { result: "" }
         });
     }
 }
 
 function displayStudents() {
     const tbody = document.getElementById("studentTableBody");
+
     tbody.innerHTML = "";
 
     students.forEach((student, index) => {
         tbody.innerHTML += `
-            <tr>
-                <td>
-                    <img src="${student.photo}" width="50" height="50">
-                </td>
-                <td>${student.name}</td>
-                <td>${student.roll}</td>
-                <td>${student.course}</td>
-                <td>${student.date}</td>
-                <td>
-                    <button onclick="deleteStudent(${index})">
-                        Delete
-                    </button>
-                </td>
-            </tr>
+        <tr>
+            <td>
+                <img src="${student.photo}"
+                     width="50"
+                     height="50"
+                     style="border-radius:50%;">
+            </td>
+            <td>${student.name}</td>
+            <td>${student.roll}</td>
+            <td>${student.course}</td>
+            <td>${student.date}</td>
+            <td>
+                <button onclick="deleteStudent(${index})">
+                    Delete
+                </button>
+            </td>
+        </tr>
         `;
     });
 }
 
 function deleteStudent(index) {
     students.splice(index, 1);
+
+    localStorage.setItem(
+        "students",
+        JSON.stringify(students)
+    );
+
     displayStudents();
     updateCount();
-}
-
-function updateCount() {
-    document.getElementById("totalStudents").innerText = students.length;
 }
 
 function clearAll() {
-    students = [];
-    displayStudents();
-    updateCount();
+    if (confirm("Delete all students?")) {
+        students = [];
+
+        localStorage.removeItem("students");
+
+        displayStudents();
+        updateCount();
+    }
+}
+
+function updateCount() {
+    document.getElementById("totalStudents").innerText =
+        students.length;
 }
