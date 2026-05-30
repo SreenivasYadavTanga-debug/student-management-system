@@ -16,24 +16,12 @@ function addStudent() {
     }
 
     if (editIndex === -1) {
-        students.push({
-            name: name,
-            roll: roll,
-            course: course
-        });
-
+        students.push({ name, roll, course });
         alert("Student added successfully");
     } else {
-        students[editIndex] = {
-            name: name,
-            roll: roll,
-            course: course
-        };
-
+        students[editIndex] = { name, roll, course };
         editIndex = -1;
-
         document.getElementById("addBtn").innerText = "Add Student";
-
         alert("Student updated successfully");
     }
 
@@ -45,11 +33,23 @@ function addStudent() {
 
 function displayStudents(filteredStudents = students) {
     let table = document.getElementById("studentList");
-
     table.innerHTML = "";
 
-    document.getElementById("studentCount").innerText =
-        students.length;
+    // Total Students
+    document.getElementById("studentCount").innerText = students.length;
+    document.getElementById("totalCard").innerText = students.length;
+
+    // Course Counts
+    let ece = students.filter(
+        student => student.course.toLowerCase() === "ece"
+    ).length;
+
+    let cse = students.filter(
+        student => student.course.toLowerCase() === "cse"
+    ).length;
+
+    document.getElementById("eceCount").innerText = ece;
+    document.getElementById("cseCount").innerText = cse;
 
     filteredStudents.forEach((student, index) => {
         let row = table.insertRow();
@@ -66,19 +66,13 @@ function displayStudents(filteredStudents = students) {
 }
 
 function editStudent(index) {
-    document.getElementById("name").value =
-        students[index].name;
-
-    document.getElementById("roll").value =
-        students[index].roll;
-
-    document.getElementById("course").value =
-        students[index].course;
+    document.getElementById("name").value = students[index].name;
+    document.getElementById("roll").value = students[index].roll;
+    document.getElementById("course").value = students[index].course;
 
     editIndex = index;
 
-    document.getElementById("addBtn").innerText =
-        "Update Student";
+    document.getElementById("addBtn").innerText = "Update Student";
 }
 
 function deleteStudent(index) {
