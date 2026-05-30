@@ -6,9 +6,9 @@ body {
 }
 
 .container {
-    max-width: 1100px;
+    max-width: 1200px;
     margin: auto;
-    background: white;
+    background: #fff;
     padding: 30px;
     border-radius: 15px;
     box-shadow: 0 0 20px rgba(0,0,0,0.1);
@@ -17,6 +17,7 @@ body {
 h1 {
     text-align: center;
     color: #1e3a8a;
+    margin-bottom: 20px;
 }
 
 h2 {
@@ -24,17 +25,18 @@ h2 {
     color: #2563eb;
 }
 
-input {
+input[type="text"],
+input[type="file"] {
     width: 300px;
     padding: 12px;
     margin: 8px;
     border: 1px solid #ccc;
     border-radius: 8px;
-    font-size: 16px;
+    font-size: 15px;
 }
 
 button {
-    padding: 12px 18px;
+    padding: 12px 20px;
     margin: 5px;
     border: none;
     border-radius: 8px;
@@ -42,6 +44,7 @@ button {
     color: white;
     cursor: pointer;
     font-size: 15px;
+    transition: 0.3s;
 }
 
 button:hover {
@@ -52,7 +55,6 @@ table {
     width: 100%;
     border-collapse: collapse;
     margin-top: 20px;
-    background: white;
 }
 
 table th {
@@ -64,7 +66,7 @@ table th {
 table td {
     padding: 12px;
     text-align: center;
-    border-bottom: 1px solid #ddd;
+    border: 1px solid #ddd;
 }
 
 table tr:nth-child(even) {
@@ -80,44 +82,26 @@ table tr:hover {
     font-weight: bold;
 }
 
-.dashboard {
-    display: flex;
-    justify-content: space-between;
-    gap: 15px;
-    margin: 20px 0;
-}
-
-.card {
-    flex: 1;
-    background: #2563eb;
-    color: white;
-    padding: 20px;
-    border-radius: 12px;
-    text-align: center;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-}
-
-.card h3 {
-    margin: 0;
-    color: white;
-}
-
-.card p {
-    font-size: 28px;
-    font-weight: bold;
-    margin-top: 10px;
+img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #2563eb;
 }
 
 @media (max-width: 768px) {
-    .dashboard {
-        flex-direction: column;
-    }
 
-    input {
+    input[type="text"],
+    input[type="file"] {
         width: 90%;
     }
 
     table {
         font-size: 14px;
+    }
+
+    button {
+        width: 90%;
     }
 }
