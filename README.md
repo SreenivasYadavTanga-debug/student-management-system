@@ -1,27 +1,22 @@
-# Student Management System
-
-A Student Management System built using HTML, CSS and JavaScript.
+# Student Attendance Management System
 
 ## Features
-
 - Add Student
+- Edit Student
 - Delete Student
 - Search Student
-- Upload Student Photo
+- Attendance Tracking
+- Photo Upload
 - Export CSV
-- Local Storage Support
-- Student Counter
+- Local Storage
 
 ## Technologies Used
-
 - HTML5
 - CSS3
 - JavaScript
 
 ## Live Demo
-
 https://sreenivasyadavtanga-debug.github.io/student-management-system/
 
 ## Author
-
 Sreenivas Yadav Tanga
